@@ -7,10 +7,11 @@ import (
 	"context"
 	"time"
 )
-//declare queue
+const QueueName = "vigil.feed"
+
 func Publish(channel *queue.Channel, feedItem item.Item){
 	q, err := channel.QueueDeclare(
-		"publisher",
+		QueueName,
 		true,
 		false,
 		false,
@@ -35,7 +36,7 @@ func Publish(channel *queue.Channel, feedItem item.Item){
 	err = channel.PublishWithContext(
 		ctx,
 		"",
-		"publisher",
+		QueueName,
 		false,
 		false,
 		queue.Publishing{
@@ -47,3 +48,41 @@ func Publish(channel *queue.Channel, feedItem item.Item){
 		log.Fatalf("Failed to publish message: %s", err)
 	}
 }
+
+func Consume(channel *queue.Channel) (<-chan queue.Delivery, error){
+	q, err := channel.QueueDeclare(
+		QueueName,
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err == nil {
+		log.Printf("Queue declared: %s", q.Name)
+	} else {
+		log.Printf("Error declaring queue: %s", err)
+		return nil, err
+	}
+
+	deliveries, err := channel.Consume(
+		QueueName,
+		"",
+		true,
+		false,
+		false,
+		false,
+	)
+
+	if err != nil {
+		log.Printf("Error consuming queue: %s", err)
+		return nil, err
+	} else {
+		return deliveries, nil
+	}
+}
+
+
+
+
+
