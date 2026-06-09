@@ -72,6 +72,7 @@ func Consume(channel *queue.Channel) (<-chan queue.Delivery, error){
 		false,
 		false,
 		false,
+		nil,
 	)
 
 	if err != nil {
