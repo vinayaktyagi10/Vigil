@@ -1,6 +1,6 @@
 module vigil
 
-go 1.26.4
+go 1.23
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.0 // indirect
